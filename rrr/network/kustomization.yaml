@@ -1,0 +1,29 @@
+# yq is used to add references to the resources for each node
+#- ./../nodes/node0
+#- ./../nodes/node{N}
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./../../base/rrr/network
+  - ./../nodes/node0
+  - ./../nodes/node1
+  - ./../nodes/node2
+  - ./../nodes/node3
+  - ./../nodes/node4
+  - ./../nodes/node5
+  - ./../nodes/node6
+  - ./../nodes/node7
+  - ./../nodes/node8
+  - wild-nodes-cert.yaml
+configMapGenerator:
+  - name: ethnode-cfg
+    behavior: merge
+    envs:
+      - ./bootnodes.env
+      - ./network.env
+  - name: genesis
+    behavior: merge
+    files:
+      - ./genesis.json
+components:
+  - ./../../components/traefik-ingressroute-tokenexchange

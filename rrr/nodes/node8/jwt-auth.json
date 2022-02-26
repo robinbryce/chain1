@@ -1,0 +1,14 @@
+{
+  "tokenValidation": {
+    "issuers": [
+      "https://sts.iona.thaumagen.io"
+    ],
+    "jws": {
+      "endpoint": "http://tokenendpoint:3000/jwks"
+    },
+    "jwt": {
+      "authorizationField": "scope",
+      "preferIntrospection": false
+    }
+  }
+}

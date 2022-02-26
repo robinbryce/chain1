@@ -1,0 +1,20 @@
+{
+  "bbeth": {
+    "eth": "",
+    "no-progress": true,
+    "retries": 50,
+    "collect": {
+       "dbsource": ""
+    },
+    "load": {
+      "tps": 300,
+      "transactions": 2000,
+      "nodes": 1,
+      "threads": 1,
+      "baseport": 8300,
+      "resolvehosts": true,
+      "staticnodes": "static-nodes.json"
+    }
+  }
+}
+

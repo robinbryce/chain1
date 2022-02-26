@@ -1,0 +1,11 @@
+[
+ "enode://45e6d14b381d6121c596e20ae66f2fae4594004c97fee2e4f2e19ffe75ceccae8dbbdcb69aac7c79c6c439a6c63631b6bcb5fa903fd244cf2416a92c4a75582a@ethnode0-0.ethnode0.chain1.svc.cluster.local:7200?discport=0",
+ "enode://4389d383ae99052a863977287078dc2d01ddd36ab412aaa5932433da57b175c89fac2faa84871a2f5100d0766de7ed102028f27b9f770bd9f807617ea1f0abee@ethnode1-0.ethnode1.chain1.svc.cluster.local:7200?discport=0",
+ "enode://6da9c6245d41a1bfc32917597fa85c8d5027c7ccd2dadd50ebb8f3ef604b60f7e60892e8cc6d8c2f1a68758238cc3e277927ff90ed16cbc38805db239dfa54f9@ethnode2-0.ethnode2.chain1.svc.cluster.local:7200?discport=0",
+ "enode://d8228dd0ff46c7c94742d26b6df29db02882c4b06c51240df31731ba522c9b7914ebcf6aca2fc8ec50f395c4c16e00774e29af550b6da1ce5281e5a8f460143d@ethnode3-0.ethnode3.chain1.svc.cluster.local:7200?discport=0",
+ "enode://ba4525b8f1a8810d04f9c2f33cda41a70ab71c8a5590e954f80a11a091653c0476cff8b92e5fb9568175cce24fe6d7a83beb135ac53b22c9057ec353fb085fee@ethnode4-0.ethnode4.chain1.svc.cluster.local:7200?discport=0",
+ "enode://d464bf1b680a46bc44d05cf8d9574c0eec2292845b546f02ef5ef3d476ce013a836bc37dc5ea7eafd668490a245ea936b510ed83225293838d6c17e6f018899d@ethnode5-0.ethnode5.chain1.svc.cluster.local:7200?discport=0",
+ "enode://6467c6ab63436945f1e14cc55e2e6fcdc25d6d532641cd078a1a1fbcdff68ac8a382962dc35b01674812376f9c8c561460bad200a4cb350f4b4afdecb4f14201@ethnode6-0.ethnode6.chain1.svc.cluster.local:7200?discport=0",
+ "enode://c457b0c8f6037b77e58fe4eea51b605cb9b3d113f1565247fae225b986275cd3af3416c613841b17eae11eaef23d3f2416cb23667d13b7f916d70f1ee5eea82d@ethnode7-0.ethnode7.chain1.svc.cluster.local:7200?discport=0",
+ "enode://7b82df9b65a9bbc7e3d17dcb349019a6b3bfc9bafa705bc837f86a3d65a8c0314fdc5e56cc47f3e2dc491266e50ef21aa9aad476f6ae46659d0f121c66010057@ethnode8-0.ethnode8.chain1.svc.cluster.local:7200?discport=0"
+]

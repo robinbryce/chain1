@@ -1,0 +1,22 @@
+nameSuffix: "7"
+commonLabels:
+  app: ethnode7
+  app.kubernetes.io/name: ethnode7
+resources:
+  - ./../../node
+  # The route file will always be node specific so its in the node{N} dir
+  - ingressroute.yaml
+components:
+  - ./../../../components/volume-config-ethnodekey
+  - ./../../../components/volume-config-genesis
+  - ./../../../components/apisec
+secretGenerator:
+  - name: ethnodekey-
+    files:
+      - key
+patchesJson6902: []
+configMapGenerator:
+  - name: ethnode-cfg-
+    files:
+      - plugins.json
+      - jwt-auth.json

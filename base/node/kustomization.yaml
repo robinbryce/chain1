@@ -1,0 +1,20 @@
+commonLabels:
+  app.kubernetes.io/part-of: ethnet
+resources:
+  - service.yaml
+  - statefulset.yaml
+patchesStrategicMerge:
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml
+  - statefulset-env-bootnode0.yaml
+  - statefulset-env-bootnode1.yaml

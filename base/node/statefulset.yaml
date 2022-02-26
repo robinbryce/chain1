@@ -1,0 +1,203 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ethnode
+spec:
+  selector:
+    matchLabels:
+      app: ethnode
+  replicas: 1
+  serviceName: ethnode
+  podManagementPolicy: "Parallel"
+
+  volumeClaimTemplates:
+  - metadata:
+      name: ethnode-pv
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 4Gi
+  template:
+    spec:
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: config
+          # target for https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/all-in-one-volume.md
+          # sources:
+          projected:
+            sources: []
+
+      containers:
+      - name: geth-rrr
+        image: quorumengineering/quorum:21.4.1
+        imagePullPolicy: Always
+        ports:
+         - name: tcp-peer
+           containerPort: 7200
+         - name: tcp-rpc
+           containerPort: 8300
+         - name: tcp-wsock
+           containerPort: 8400
+         - name: tcp-metr
+           containerPort: 6060
+         - name: tcp-pprof
+           containerPort: 9545
+
+        volumeMounts:
+          - name: ethnode-pv
+            mountPath: /data
+          # mount for https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/all-in-one-volume.md
+          - name: config
+            mountPath: /config
+
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: NETWORKID
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: NETWORKID
+          - name: METRICS_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: METRICS_OPTS
+          - name: CONSENSUS_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: CONSENSUS_OPTS
+          - name: DISCOVERY_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: DISCOVERY_OPTS
+          - name: RPC_APIS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: RPC_APIS
+          - name: SYNC_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: SYNC_OPTS
+          - name: PRIVATE_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: PRIVATE_CONFIG
+          - name: P2P_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: P2P_PORT
+          - name: WS_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: WS_OPTS
+          - name: RPC_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: RPC_OPTS
+          - name: GAS_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: GAS_OPTS
+          - name: MINER_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: MINER_OPTS
+          - name: LOG_OPTS
+            valueFrom:
+              configMapKeyRef:
+                name: ethnode-cfg
+                key: LOG_OPTS
+        command:
+          - sh
+        args:
+          - -cx
+          - |
+            set -ex
+
+            NAT_OPTS="--nat=none"
+
+            # quorum resolves the bootnode dns names once on startup
+            if [ -n "$BOOTNODE_PUB0" ]; then
+              BOOTNODES=enode://${BOOTNODE_PUB0}@${BOOTNODE_HOST0}:${P2P_PORT}
+            fi
+
+            if [ -n "$BOOTNODE_PUB1" ]; then
+              [ -n "${BOOTNODES}" ] && BOOTNODES="${BOOTNODES},"
+              BOOTNODES="${BOOTNODES}enode://${BOOTNODE_PUB1}@${BOOTNODE_HOST1}:${P2P_PORT}"
+            fi
+
+            # if we expect bootnodes and are not one of them, hang around until
+            # one is available. k8s dns will fail until the node is ready
+            HOSTNAME=$(hostname -f)
+            if [ -n "$BOOTNODE_PUB0" ] && { [ "${HOSTNAME}" != "${BOOTNODE_HOST0}" ] && [ "${HOSTNAME}" != "${BOOTNODE_HOST1}" ]; }; then
+            while true; do
+              [ -n "${BOOTNODE_HOST0}" ] && nslookup -type=a ${BOOTNODE_HOST0} && break
+              [ -n "${BOOTNODE_HOST1}" ] && nslookup -type=a ${BOOTNODE_HOST1} && break
+              echo "waiting for a bootnode to be available ..."
+              sleep 1
+            done
+            fi
+            if [ -n "$BOOTNODE_PUB0" ]; then
+              if  { [ "${HOSTNAME}" = "${BOOTNODE_HOST0}" ] || [ "${HOSTNAME}" = "${BOOTNODE_HOST1}" ]; }; then
+                DISCOVERY_OPTS="--netrestrict=${POD_IP}/16"
+              else
+                DISCOVERY_OPTS="--netrestrict=${POD_IP}/16 --bootnodes=${BOOTNODES}"
+              fi
+            fi
+
+            # this is the genesis account
+            ETHERBASE="b5983bf72a55b48d302638da5292f60f93597d96"
+
+            [ -f /config/static-nodes.json ] && cp -v /config/static-nodes.json /data/node/ && cat /data/node/static-nodes.json
+
+            cd /data/node
+            PRIVATE_CONFIG=ignore geth \
+                --networkid ${NETWORKID} \
+                ${CONSENSUS_OPTS} \
+                ${GAS_OPTS} \
+                ${NAT_OPTS} ${DISCOVERY_OPTS} \
+                ${METRICS_OPTS} \
+                --port ${P2P_PORT} \
+                --nodekey /config/nodekey \
+                --datadir /data/node \
+                --gcmode archive  --syncmode full \
+                --nousb \
+                ${MINER_OPTS} --miner.etherbase ${ETHERBASE} \
+                ${RPC_OPTS} \
+                ${RPC_APIS} \
+                ${LOG_OPTS}
+
+      initContainers:
+      - name: chaininit
+        image: quorumengineering/quorum:21.4.1
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: ethnode-pv
+            mountPath: /data
+          - name: config
+            mountPath: /config
+        command:
+          - sh
+        args:
+          - -cx
+          - |
+            set -e
+            [ -f /data/node/geth/LOCK ] && exit 0
+            echo "initialising node"
+            geth init \
+                --datadir /data/node \
+                  /config/genesis.json

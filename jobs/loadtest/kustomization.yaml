@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./../../base/jobs/loadtest
+configMapGenerator:
+  - name: bbeth-cfg
+    behavior: merge
+    files:
+      - bbeth.json
+  - name: bbeth-target-nodes-cfg
+    behavior: merge
+    files:
+      - ./static-nodes.json
+namespace: chain1
