@@ -15,7 +15,7 @@ spec:
   routes:
     # traefik-route will be yq replaced to something like
     # Host(`blockbench.io`) && Path(`/node/ethnode0`)
-    - match: Host(`iona.thaumagen.io`) && Path(`/node/ethnode1`)
+    - match: Host(`iona.thaumagen.io`) && PathPrefix(`/node/ethnode1`)
       kind: Rule
       services:
         - kind: Service

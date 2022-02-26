@@ -1,0 +1,77 @@
+---
+version: '3'
+silent: true
+
+env:
+  ENV: .local/dev
+  PROFILE: '{{.PROFILE | default ""}}'
+  # This override is provided so that the generate task can be used to
+  # quick start consumers of this repository with useful defaults.
+  K8S_GENERATE_DIR: '{{.K8S_GENERATE_DIR | default "k8s/tmp"}}'
+
+dotenv: [".env", '{{.ENV}}/.env', '{{.HOME}}/.env']
+
+tasks:
+
+  bootstrap:
+    desc: |
+      creates the {{.ENV}}/.env file and installs tooling. assumes a debain
+      like system (but uses python or brew where possible). for other platforms
+      run `task bootstrap --sumarize` and use the results to find the right
+      bits.  Note that .env (in the directory containing this Taskfile) is
+      never created or touched in anyway and has the highest precedence
+
+      NOTICE: to re-create {{.ENV}}/.env you MUST delete it first (else it will
+      be re-created with the same values
+
+    cmds:
+      - |
+        mkdir -p {{.ENV}}
+
+        rm -f {{.ENV}}/.env
+
+        CONTEXT=${CONTEXT:-$(kubectl config current-context)}
+        CLUSTER=$(kubectl config get-contexts ${CONTEXT} --no-headers=true | tr -s ' ' | cut -d ' ' -f3)
+        CONTEXT_NAMESPACE=${CONTEXT_NAMESPACE:-$(echo ${CONTEXT} | cut -d '-' -f1)}
+        NAMESPACE=${NAMESPACE:-$(basename $PWD)}
+
+        APPNAME=${APPNAME:-"$(basename $PWD)"}
+        HOST=${HOST:-"http://${CONTEXT_NAMESPACE}.${ORGANISATION}.${TLD}"}
+        DOMAIN=${DOMAIN:-"${ORGANISATION}.${TLD}"}
+        FQDN=${FQDN:-"${CONTEXT_NAMESPACE}.${DOMAIN}"}
+
+        cat <<EOF > {{.ENV}}/.env
+        CONTEXT=${CONTEXT}
+        CLUSTER=${CLUSTER}
+        CONTEXT_NAMESPACE=${CONTEXT_NAMESPACE}
+        NAMESPACE=${NAMESPACE}
+        APPNAME=${APPNAME}
+        PORT=${PORT}
+        HOST=${HOST}
+        DOMAIN=${DOMAIN}
+        FQDN=${FQDN}
+        EOF
+
+    env:
+      ORGANISATION: '{{.ORGANISATION | default "thaumagen"}}'
+      TLD: '{{.TLD | default "io"}}'
+      CONTEXT: "{{.CONTEXT}}"
+      CONTEXT_NAMESPACE: "{{.CONTEXT_NAMESPACE}}"
+      NAMESPACE: "{{.NAMESPACE}}"
+      APPNAME: ""
+      PROFILE: '{{.PROFILE | default "local"}}'
+      PORT: '{{.PORT | default "80"}}'
+      HOST: ""
+      DOMAIN: ""
+      FQDN: ""
+
+  deploy:
+    cmds:
+      - |
+        kustomize build rrr | kubectl apply -f -
+
+  down:
+    desc: 'take the app down and clean up the k8s resources'
+    cmds:
+      - |
+        kustomize build rrr | kubectl delete -f -

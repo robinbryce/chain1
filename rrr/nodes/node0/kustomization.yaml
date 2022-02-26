@@ -15,7 +15,6 @@ secretGenerator:
   - name: ethnodekey-
     files:
       - key
-patchesJson6902: []
 configMapGenerator:
   - name: ethnode-cfg-
     files:

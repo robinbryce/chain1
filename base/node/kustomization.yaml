@@ -6,15 +6,3 @@ resources:
 patchesStrategicMerge:
   - statefulset-env-bootnode0.yaml
   - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
-  - statefulset-env-bootnode0.yaml
-  - statefulset-env-bootnode1.yaml
