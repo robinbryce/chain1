@@ -1,0 +1,4 @@
+.git/
+.terraform/
+tf/chain1/.terraform
+.*
