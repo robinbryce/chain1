@@ -18,7 +18,7 @@ terraform {
   backend "remote" {
     organization = "robinbryce"
     workspaces {
-      name = "iona-cluster-k8s"
+      name = "iona-chain1"
     }
   }
 }

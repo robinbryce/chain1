@@ -57,7 +57,7 @@ resource "google_project_iam_member" "apikeystore_reader" {
   depends_on = [google_project_iam_custom_role.apikeystore_reader]
   project = local.gcp_project_id
   role = "projects/${local.gcp_project_id}/roles/apikeystore_reader"
-  member = "serviceAccount:${google_service_account.dns["apikeystore_reader"].email}"
+  member = "serviceAccount:${google_service_account.apikeystore_reader.email}"
 }
 
 # -----------------------------------------------------------------------------
@@ -112,5 +112,5 @@ resource "google_project_iam_member" "apikeystore_writer" {
   depends_on = [google_project_iam_custom_role.apikeystore_writer]
   project = local.gcp_project_id
   role = "projects/${local.gcp_project_id}/roles/apikeystore_writer"
-  member = "serviceAccount:${google_service_account.dns["apikeystore_writer"].email}"
+  member = "serviceAccount:${google_service_account.apikeystore_writer.email}"
 }
