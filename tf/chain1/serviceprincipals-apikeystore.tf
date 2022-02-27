@@ -71,14 +71,6 @@ resource "google_service_account_iam_member" "apikeystore_writer" {
   member             = "${local.workloadid_fqdn}[${var.apikeystore_namespace}/apikeystore-writer-sa]"
 }
 
-# provided so we can have write access for tracking usage metrics of keys independently
-# of the write access required to update or delete the keys.
-resource "google_service_account" "apikeystore_keymetrics" {
-  account_id   = "apikeystore-keymetrics-sa"
-  display_name = substr("Workload Identity ${local.workloadid_fqdn}[${var.apikeystore_namespace}/apikeystore-keymetrics-sa]", 0, 100)
-  project      = local.gcp_project_id
-}
-
 # -----------------------------------------------------------------------------
 # Writer role
 # -----------------------------------------------------------------------------
@@ -95,7 +87,11 @@ resource "google_project_iam_custom_role" "apikeystore_writer" {
   permissions = [
     "appengine.applications.get",
     "datastore.databases.get",
-    "datastore.entities.*",
+    "datastore.entities.get",
+    "datastore.entities.list",
+    "datastore.entities.create",
+    "datastore.entities.update",
+    "datastore.entities.delete",
     "datastore.indexes.list",
     "datastore.namespaces.get",
     "datastore.namespaces.list",
