@@ -45,9 +45,9 @@ resource "google_project_iam_custom_role" "apikeystore_reader" {
     "datastore.namespaces.get",
     "datastore.namespaces.list",
     "datastore.statistics.get",
-    "datastore.statistics.list",
-    "resourceManager.projects.get",
-    "resourceManager.projects.list"
+    "datastore.statistics.list"#,
+    #"resourceManager.projects.get",
+    #"resourceManager.projects.list"
   ]
 }
 
@@ -96,9 +96,9 @@ resource "google_project_iam_custom_role" "apikeystore_writer" {
     "datastore.namespaces.get",
     "datastore.namespaces.list",
     "datastore.statistics.get",
-    "datastore.statistics.list",
-    "resourceManager.projects.get",
-    "resourceManager.projects.list"
+    "datastore.statistics.list"#,
+    #"resourceManager.projects.get",
+    #"resourceManager.projects.list"
   ]
 }
 
