@@ -69,8 +69,8 @@ tasks:
     cmds:
       - |
         [ -n "$(git status --porcelain)" ] && echo "status not clean, commit or revert before tagging" && exit 1
-        git tag -a -m "automatic tag" v$(date +%Y.%m.%d-%s)
-        # git push --tags
+        git tag -a -m "automatic tag" c$(date +%Y.%m.%d-%s)
+        git push --tags
 
   deploy:
     cmds:
